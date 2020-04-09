@@ -24,11 +24,15 @@ Titanic <- subset(Titanic, PassengerId != 62 & PassengerId != 830)
 Titanic
 
 
+#Recuperons les données des passagers qui ont survécu
+TitaSurvived <- subset(Titanic, Survived == 1)
+#288 passagers ont survécu lors du naufrage
+
 #Recuperons les données des passagers de moins de 18 ans
 TitaEnfant <- subset(Titanic, Age < 18)
 
 #Je récupère les caractèristiques de age et de survived
-TitaEnfant = TitaEnfant[, c('Survived', 'Age')]
+TitaEnfant = TitaEnfant[, c('Survived', 'Age')] # Il y a 113 enfants au total parmis les passagers
 names(TitaEnfant)
 
 #Afficher les caractèristiques des colonnes
@@ -38,7 +42,7 @@ sapply(TitaEnfant, sd) #ecart type de l'age des enfants = 6.0304077 soit environ
 
 
 #Je récupère les caractèristiques de age et de survived des enfants qui ont survecu
-TitaEnfantSuv = subset(TitaEnfant, Survived == 1) 
+TitaEnfantSuv = subset(TitaEnfant, Survived == 1) # Il y a 61 enfants qui ont survécu lors du naufrage et donc 52 qui n'ont pas survécu
 #names(TitaEnfantSur)
 
 #Afficher les caractèristiques des colonnes
@@ -47,63 +51,29 @@ summary(TitaEnfantSuv) #la moyenne d'age des enfants est 7.888 environ 7,9
 sapply(TitaEnfantSuv, sd) #ecart type de l'age des enfant = 6.129831 environ 6,13
 
 
-# H0 les enfants ne sont pas privilégiés.
-# H1 les enfants sont privilégiés.
-
-# Réalisation du test de khi-deux
-#Test de Khideux
-test <- chisq.test(TitaEnfantSuv) # TitaEnfantSuv = tableau de contingence
-
-
-#Test de Khideux
-test1 <- chisq.test(TitaEnfant) # TitaEnfantSuv = tableau de contingence
-
-#Accès aux différents objets du test:
-test$statistic #: la statistique du Chi2.
-test$parameter #: le nombre de degrés de libertés.
-test$p.value #: la p-value = 0.372411
-test$observed #: la matrice observée de départ.
-test$expected #: la matrice attendue sous l'hypothèse nulle d'absence de biais.
-
-
 #Faire un test d'hypothèse pour vérifier si oui ou non, les femmes ont été privilégiées lors du naufrage.
 #Recuperons les données des passagers femmes
-TitaFemme <- subset(Titanic, Sex == "female") # Il y a au total 261 femmes à bord
+TitaFemme <- subset(Titanic, Sex == "female") # Il y a au total 259 femmes à bord
+
 
 #Je récupère les caractèristiques de age et de survived
 TitaFemme = TitaFemme[, c('Survived', 'Sex')]
 names(TitaFemme)
 
-#Afficher les caractèristiques des colonnes
-#summary(TitaFemme) #la moyenne d'age des enfants est 9.04
 
-#sapply(TitaFemme, sd) #ecart type de l'age des enfants = 6.0304077 soit environ 6.03
-
-
-#Je récupère les caractèristiques de age et de survived des enfants qui ont survecu
-TitaFemmeSuv = subset(TitaFemme, Survived == 1) # 197 femmes ont survécu.
+#Je récupère les caractèristiques de age et de survived des femmes qui ont survecu
+TitaFemmeSuv = subset(TitaFemme, Survived == 1) # 195 femmes ont survécu.
 #names(TitaEnfantSur)
 
-#Afficher les caractèristiques des colonnes
-#summary(TitaFemmeSuv) #la moyenne d'age des enfants est 7.888 environ 7,9
 
 #sapply(TitaFemmeSuv, sd) #ecart type de l'age des enfant = 6.129831 environ 6,13
 Mort <- subset(Titanic, Survived == 0)
 Mort
 
-# Réalisation du test de khi-deux
-#Test de Khideux
-test1 <- chisq.test(TitaFemmeSuv) # TitaEnfantSuv = tableau de contingence
-#Accès aux différents objets du test:
-test1$statistic #: la statistique du Chi2.
-test1$parameter #: le nombre de degrés de libertés.
-test1$p.value #: la p-value.
-test1$observed #: la matrice observée de départ.
-test1$expected #: la matrice attendue sous l'hypothèse nulle d'absence de biais.
 
 
 #Faire un test d'hypothèse pour savoir si oui ou non, les enfants ont été privilégiés lors du naufrage.
-M <- as.table(rbind(c(61, 229), c(52, 327))) # création d'une table 2 lignes/2 colonnes
+M <- as.table(rbind(c(61, 227), c(52, 372))) # création d'une table 2 lignes/2 colonnes
 dimnames(M) <- list(Vivant=c("Oui","Non"), Enfant = c("Oui","Non"))# entête colonne et ligne
 test <- chisq.test(M) # affichage des résultats du test
 
@@ -112,10 +82,10 @@ test$parameter #: le nombre de degrés de libertés.
 test$p.value #: la p-value.
 test$observed #: la matrice observée de départ.
 test$expected #: la matrice attendue sous l'hypothèse nulle d'absence de biais.
-
+#.la p-value = 0.001993878, donc < 0.05, on accepte H0
 
 #Faire un test d'hypothèse pour vérifier si oui ou non, les femmes ont été privilégiées lors du naufrage.
-Mat <- as.table(rbind(c(197, 93), c(64, 360))) # création d'une table 2 lignes/2 colonnes
+Mat <- as.table(rbind(c(195, 93), c(64, 360))) # création d'une table 2 lignes/2 colonnes
 dimnames(Mat) <- list(Vivant=c("Oui","Non"), Femmes = c("Oui","Non"))# entête colonne et ligne
 test1 <- chisq.test(Mat) # affichage des résultats du test
 
@@ -127,6 +97,8 @@ test1$expected #: la matrice attendue sous l'hypothèse nulle d'absence de biais.
 
 #On va récuperer les prix des billets des survivants
 TitSuvFare = subset(Titanic, Survived == 1) 
+
+
 #Je récupère les caractèristiques de Fare et de survived
 TitSuvFare2 = TitSuvFare[, c('Fare', 'Survived')]
 names(TitSuvFare2)
@@ -134,6 +106,7 @@ summary(TitSuvFare2) #la moyenne est 51.84
 
 #On va récuperer les prix des billets des non survivants
 TitMortFare = subset(Titanic, Survived == 0) 
+
 #Je récupère les caractèristiques de Fare et de survived
 TitMortFare2 = TitMortFare[, c('Fare', 'Survived')]
 names(TitMortFare2)
